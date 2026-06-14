@@ -101,9 +101,56 @@
   .tools button{font-size:12px;padding:7px 10px}
   footer{margin-top:24px;color:var(--muted);font-size:12px;text-align:center;line-height:1.7}
   footer a{color:var(--orange2)}
+  /* wachtwoord-slot */
+  #gate{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+        background:radial-gradient(800px 500px at 50% -10%,#241405,var(--bg))}
+  #gate.hidden{display:none}
+  .gatebox{width:min(360px,92vw);background:linear-gradient(180deg,var(--panel),var(--panel2));
+           border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;text-align:center}
+  .gatelogo{font-size:26px;font-weight:800}.gatelogo .o{color:var(--orange)}
+  .gatesub{color:var(--muted);font-size:13px;margin:8px 0 18px}
+  #gateform{display:flex;gap:8px}
+  #gatepw{flex:1;background:#0e141c;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px;font-size:15px}
+  #gateform button{background:var(--orange);color:#1a1206;border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
+  .gateerr{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
 </style>
 </head>
 <body>
+<div id="gate">
+  <div class="gatebox">
+    <div class="gatelogo">⚽ <span class="o">BLOW</span> Poule</div>
+    <div class="gatesub">Voer het wachtwoord in om de poule te bekijken.</div>
+    <form id="gateform">
+      <input id="gatepw" type="password" placeholder="wachtwoord" autocomplete="current-password" autofocus>
+      <button type="submit">Openen</button>
+    </form>
+    <div class="gateerr" id="gateerr"></div>
+  </div>
+</div>
+<script>
+(function(){
+  // SHA-256 van het wachtwoord (niet het wachtwoord zelf).
+  var HASH = "1b9f134949e4c7db303edfebf2da586526bd2873e3ca895802f3a94acf5fc084";
+  var KEY = "poule_unlocked_NEDJAP";
+  var gate = document.getElementById("gate");
+  function open(){ window.__pouleUnlocked = true; gate.classList.add("hidden");
+    if (window.__pouleStart) window.__pouleStart(); }
+  if (localStorage.getItem(KEY) === HASH) open();
+  function sha(s){
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)).then(function(b){
+      return Array.from(new Uint8Array(b)).map(function(x){ return x.toString(16).padStart(2,"0"); }).join("");
+    });
+  }
+  document.getElementById("gateform").addEventListener("submit", function(e){
+    e.preventDefault();
+    var pw = document.getElementById("gatepw").value, err = document.getElementById("gateerr");
+    sha(pw).then(function(h){
+      if (h === HASH){ localStorage.setItem(KEY, HASH); err.textContent = ""; open(); }
+      else { err.textContent = "Onjuist wachtwoord."; document.getElementById("gatepw").select(); }
+    }).catch(function(){ err.textContent = "Kon niet controleren (oude browser?)."; });
+  });
+})();
+</script>
 <div class="wrap">
   <header>
     <div>
@@ -222,7 +269,6 @@
       render();
     }).catch(function(e){ syncing=false; lastError="ESPN niet bereikbaar"; render(); });
   }
-  setInterval(sync, 15000);
 
   /* ---------- render ---------- */
   function statusBadge(){
@@ -328,7 +374,10 @@
 
   function escapeHtml(s){ return (s||"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 
-  render(); sync();
+  // Start pas na ontgrendeling (zie wachtwoord-slot bovenaan).
+  function start(){ render(); sync(); if(!start._iv) start._iv = setInterval(sync, 15000); }
+  window.__pouleStart = start;
+  if (window.__pouleUnlocked) start(); else render();
 })();
 </script>
 </body>

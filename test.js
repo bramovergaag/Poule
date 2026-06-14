@@ -8,24 +8,16 @@ const { PREDICTIONS } = require("./predictions.js");
 let fails = 0;
 function ok(name, cond) { console.log((cond ? "✓" : "✗ FOUT") + "  " + name); if (!cond) fails++; }
 
-// 1) syntaxcheck van index.html app-script + live.js
+// 1) syntaxcheck van alle inline scripts (slot + app) + live.js
 const html = fs.readFileSync(__dirname + "/index.html", "utf8");
-const m = html.match(/<script>\s*\(function\(\)\{([\s\S]*?)\}\)\(\);\s*<\/script>/);
-ok("index.html bevat app-script", !!m);
-if (m) {
-  const stub =
-    "const PLAYERS={NED:[],JAP:[]},PREDICTIONS=[]," +
-    "SCORING={liveScore:()=>({ned:0,jap:0}),standings:()=>[],RULES:{}}," +
-    "LIVE={fetchMatch:()=>Promise.resolve(null)};" +
-    "const el={textContent:'',innerHTML:'',value:'',checked:false,style:{},classList:{toggle(){},add(){},remove(){}},focus(){},appendChild(){},addEventListener(){},closest(){return null},querySelector(){return null}};" +
-    "const document={getElementById:()=>el,querySelectorAll:()=>[],createElement:()=>el,body:{classList:{toggle(){}}}};" +
-    "const localStorage={getItem:()=>null,setItem(){},removeItem(){}};const confirm=()=>false;" +
-    "const setInterval=()=>0;const setTimeout=()=>0;const fetch=()=>Promise.resolve({json:()=>({})});" +
-    "const URL={createObjectURL:()=>'',revokeObjectURL(){}};const Blob=function(){};const location={reload(){}};const window={};";
-  fs.writeFileSync("/tmp/poule_app.js", "(function(){" + stub + m[1] + "})();");
-  cp.execSync("node --check /tmp/poule_app.js");
-  ok("index.html app-script: syntax OK", true);
-}
+const blocks = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)]
+  .map((x) => x[1]).filter((s) => /\(function\s*\(\)\s*\{/.test(s));
+ok("index.html bevat slot + app script", blocks.length >= 2);
+blocks.forEach((b, i) => {
+  fs.writeFileSync("/tmp/poule_block_" + i + ".js", b);
+  cp.execSync("node --check /tmp/poule_block_" + i + ".js");
+});
+ok("alle inline scripts: syntax OK (" + blocks.length + ")", true);
 cp.execSync("node --check " + __dirname + "/live.js");
 ok("live.js: syntax OK", true);
 
