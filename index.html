@@ -166,7 +166,6 @@
   <div class="srcbar">
     <span class="src" id="src"><span class="d"></span><span id="srcText">verbinden met ESPN…</span></span>
     <span class="right">
-      <button class="mini" id="share">📲 Deel via WhatsApp</button>
       <button class="mini" id="refresh">↻ ververs nu</button>
     </span>
   </div>
@@ -378,10 +377,6 @@
     manualMatch.goals.splice(parseInt(t.dataset.del,10),1); saveManual(); render();
   });
   $("refresh").onclick=function(){ if(mode==="auto") sync(); else render(); };
-  $("share").onclick=function(){
-    var n=NARRATIVE.liveNarrative(PREDICTIONS, current(), SCORING);
-    window.open("https://wa.me/?text="+encodeURIComponent(n.share), "_blank", "noopener");
-  };
   $("adm").onchange=function(){
     mode=this.checked?"manual":"auto";
     localStorage.setItem(MODE_STORE, mode);
