@@ -48,5 +48,24 @@ ok("Lynn = 15pt (maker+minuut+stand) ondanks volledige namen", lynn.total === 15
 const top = rows[0];
 console.log("\nWinnaar in testscenario: " + top.name + " (" + top.total + "pt)");
 
+// 5) live-narratief
+const NARRATIVE = require("./narrative.js");
+cp.execSync("node --check " + __dirname + "/narrative.js");
+ok("narrative.js: syntax OK", true);
+
+const nSched = NARRATIVE.liveNarrative(PREDICTIONS, { status: "scheduled", goals: [], minute: "" }, SCORING);
+ok("scheduled: maker-kandidaten genoemd", nSched.lines.join(" ").includes("Dumfries") && nSched.lines.join(" ").includes("Gakpo"));
+ok("share bevat link + wachtwoord", nSched.share.includes("github.io/Poule") && nSched.share.includes("BLOWWK"));
+
+const nLive = NARRATIVE.liveNarrative(PREDICTIONS, { status: "live", goals: [], minute: "28'" }, SCORING);
+ok("live 28e min: Lynn op de klok (exact)", nLive.lines.join(" ").includes("Lynn (28')"));
+
+const nGoal = NARRATIVE.liveNarrative(PREDICTIONS, { status: "live", score: { ned: 1, jap: 0 },
+  goals: [{ team: "NED", scorer: "Denzel Dumfries", scorerShort: "D. Dumfries", minute: 28 }], minute: "29'" }, SCORING);
+ok("na 1e goal Dumfries: maker → Dumfries-tippers", nGoal.lines.join(" ").includes("Lynn") && nGoal.lines.join(" ").includes("Simone"));
+ok("na 1e goal: vervolg-scenario NL/JP scoort", nGoal.lines.join(" ").includes("NL scoort") && nGoal.lines.join(" ").includes("JP scoort"));
+
+console.log("\n--- voorbeeld live-bericht (1-0, Dumfries 28') ---\n" + nGoal.share);
+
 console.log("\n" + (fails ? (fails + " test(s) GEFAALD") : "Alle tests OK"));
 process.exit(fails ? 1 : 0);
