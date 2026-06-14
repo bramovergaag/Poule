@@ -19,7 +19,6 @@
     preds.forEach(function (p) { var k = keyFn(p); if (!(k in map)) { map[k] = []; order.push(k); } map[k].push(p); });
     return order.map(function (k) { return { key: k, preds: map[k] }; });
   }
-  // wie zou winnen bij eindstand ned-jap?
   function whoAt(preds, ned, jap, SC) {
     var o = SC.outcome(ned, jap);
     return {
@@ -31,6 +30,11 @@
   function liveNarrative(PREDICTIONS, match, SC) {
     var lines = [], status = match.status || "scheduled";
     var first = firstGoal(match), sc = SC.liveScore(match);
+    var OPP = (match.opp && match.opp.abbr) || "TEG";
+    if (!PREDICTIONS.length) {
+      lines.push("📝 Nog geen inzendingen voor deze wedstrijd — wees de eerste met 'Doe mee'!");
+      return { lines: lines, share: "⚽ *BLOW Poule* · Nederland–" + OPP + "\nDoe mee: https://bramovergaag.github.io/Poule/ (🔑 BLOWWK)" };
+    }
     var lead = SC.standings(PREDICTIONS, match)[0];
 
     if (status === "scheduled") {
@@ -56,14 +60,14 @@
       var rows = SC.standings(PREDICTIONS, match);
       var makerWin = PREDICTIONS.filter(function (p) { return SC.nameMatch(p.scorer, first.scorer); }).map(nm);
       var minWin = rows.filter(function (r) { return r.det.flags.minute; }).map(function (r) { return r.name + " (+" + r.det.minute + ")"; });
-      lines.push("✅ 1e goal: " + (first.scorerShort || first.scorer) + " in de " + first.minute + "' (" + (first.team === "NED" ? "NL" : "JP") + "). " +
+      lines.push("✅ 1e goal: " + (first.scorerShort || first.scorer) + " in de " + first.minute + "' (" + (first.team === "NED" ? "NL" : OPP) + "). " +
         "Maker → " + who(makerWin) + ". Minuut → " + who(minWin) + ".");
       var now = whoAt(PREDICTIONS, sc.ned, sc.jap, SC);
       lines.push("📊 Zou het NU eindigen (" + sc.ned + "-" + sc.jap + "): exact +6 → " + who(now.exact) + "; juiste uitslag +2 → " + who(now.toto) + ".");
       var nNED = whoAt(PREDICTIONS, sc.ned + 1, sc.jap, SC);
       var nJAP = whoAt(PREDICTIONS, sc.ned, sc.jap + 1, SC);
       lines.push("➕ 🟧 NL scoort (→" + (sc.ned + 1) + "-" + sc.jap + "): exact " + who(nNED.exact) +
-        ".  🎌 JP scoort (→" + sc.ned + "-" + (sc.jap + 1) + "): exact " + who(nJAP.exact) + ".");
+        ".  " + OPP + " scoort (→" + sc.ned + "-" + (sc.jap + 1) + "): exact " + who(nJAP.exact) + ".");
     }
 
     if (status === "finished") {
@@ -72,7 +76,7 @@
       lines.push("🥇 Leider nu: " + lead.name + " (" + lead.total + " pt).");
     }
 
-    var head = "⚽ *BLOW Poule* · NL " + sc.ned + "-" + sc.jap + " JP" + (match.minute ? " (" + match.minute + ")" : "");
+    var head = "⚽ *BLOW Poule* · NL " + sc.ned + "-" + sc.jap + " " + OPP + (match.minute ? " (" + match.minute + ")" : "");
     var spice = lines.filter(function (l) { return /🎯|✅|🔥|🏁/.test(l); })[0] || lines[0];
     var share = head + "\n" + spice + "\n🥇 Leider: " + lead.name + " (" + lead.total + "pt)\n▶ https://bramovergaag.github.io/Poule/  (🔑 BLOWWK)";
 
