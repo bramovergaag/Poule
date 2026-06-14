@@ -13,8 +13,8 @@
     { name: "Floris",           scorer: "Dumfries", minute: 30, h: 1, a: 1 },
     { name: "Lynn",             scorer: "Dumfries", minute: 28, h: 2, a: 1 },
     { name: "Team Colombia",    scorer: "Ueda",     minute: 10, h: 1, a: 2 },
-    { name: "?",                scorer: "Gakpo",    minute: 53, h: 1, a: 1 }, // ⚠️ naam ontbrak
-    { name: "Anthony (A-Team)", scorer: "Malen",    minute: 42, h: 2, a: 1 },
+    { name: "A-Team",           scorer: "Gakpo",    minute: 53, h: 1, a: 1 },
+    { name: "Anthony Das",      scorer: "Malen",    minute: 42, h: 2, a: 1 },
     { name: "Stella",           scorer: "Gakpo",    minute: 25, h: 1, a: 1 }  // ⚠️ naam onzeker
   ];
 
