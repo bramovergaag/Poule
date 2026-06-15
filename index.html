@@ -3,111 +3,124 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BLOW Poule · Oranje op het WK (live)</title>
+<title>BLOW Poule · Oranje op het WK</title>
 <style>
   :root{
-    --bg:#0c0f14; --panel:#141a22; --panel2:#1a212b; --line:#283140;
-    --txt:#eef2f7; --muted:#8b97a7; --orange:#ff7a18; --orange2:#ffae3b;
-    --green:#37c871; --amber:#f0b429; --red:#f0586b; --blue:#4ea1ff;
-    --radius:16px; --shadow:0 10px 30px rgba(0,0,0,.4);
+    --blow-orange:#C66A1F; --orange-soft:#F3E2D2;
+    --dijk:#1F5C4D; --dijk-soft:#e3f0ea;
+    --ink:#1c1c1c; --muted:#6b6b6b; --line:#e7e2db; --bg:#faf7f3; --card:#ffffff;
+    --live:#c0392b;
+    --radius:14px; --shadow:0 1px 4px rgba(0,0,0,.05),0 10px 26px rgba(28,28,28,.04);
   }
   *{box-sizing:border-box}
-  body{margin:0;background:radial-gradient(1100px 600px at 75% -10%,#241405,var(--bg)) fixed;
-       color:var(--txt);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:1080px;margin:0 auto;padding:22px 16px 64px}
-  header{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin-bottom:14px}
-  header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.3px}
-  header h1 .o{color:var(--orange)}
-  header .sub{color:var(--muted);font-size:13px}
-  header .sub a{color:var(--orange2)}
-  .live{margin-left:auto;display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted)}
-  .clock{font-variant-numeric:tabular-nums;font-weight:600;color:var(--txt)}
-  .badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-  .b-live{background:rgba(240,88,107,.16);color:#ff7d8c}
-  .b-live .d{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:5px;animation:pulse 1.3s infinite}
-  .b-sched{background:rgba(139,151,167,.16);color:var(--muted)}
-  .b-fin{background:rgba(55,200,113,.16);color:var(--green)}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(240,88,107,.6)}70%{box-shadow:0 0 0 7px rgba(240,88,107,0)}100%{box-shadow:0 0 0 0 rgba(240,88,107,0)}}
-  .selbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  /* brandbar */
+  .brandbar{background:var(--blow-orange);color:#fff;display:flex;align-items:center;gap:14px;
+            padding:13px 22px;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+  .brandbar .logo{font-weight:800;letter-spacing:2px;font-size:20px}
+  .brandbar .sub{font-weight:500;opacity:.92;font-size:14px}
+  .brandbar .right{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:13px}
+  .brandbar .clock{font-variant-numeric:tabular-nums;font-weight:600;opacity:.95}
+  main{max-width:1000px;margin:0 auto;padding:26px 18px 10px}
+  .eyebrow{color:var(--blow-orange);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;font-size:12px}
+  h1{font-size:30px;line-height:1.15;margin:6px 0 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  /* status-chip */
+  .badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;vertical-align:middle}
+  .b-live{background:#fbe6e2;color:var(--live)}
+  .b-live .d{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--live);margin-right:5px;animation:pulse 1.3s infinite}
+  .b-sched{background:#efeae3;color:var(--muted)}
+  .b-fin{background:var(--dijk-soft);color:var(--dijk)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.5)}70%{box-shadow:0 0 0 7px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+  /* match-kiezer */
+  .selbar{display:flex;align-items:center;gap:10px;margin:0 0 16px;flex-wrap:wrap}
   .selbar label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700}
-  select.sel{background:#0e141c;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:9px 12px;font-size:14px;font-weight:600;min-width:240px}
-  .selbar .src{display:inline-flex;align-items:center;gap:7px;background:#0e141c;border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12px;color:var(--muted)}
-  .selbar .src .d{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-  .selbar .src.err .d{background:var(--red);animation:none}
+  select.sel{background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 12px;font-size:14px;font-weight:600;min-width:240px;font-family:inherit}
+  select.sel:focus,.frow input:focus,#gatepw:focus{outline:none;border-color:var(--blow-orange)}
   .selbar .right{margin-left:auto;display:flex;gap:8px;align-items:center}
-  .mini{background:#1d2632;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
-  .mini:hover{border-color:var(--orange)}
-  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
-        border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-  .card h2{margin:0 0 14px;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+  .src{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;color:var(--muted)}
+  .src .d{width:7px;height:7px;border-radius:50%;background:var(--dijk);animation:pulse2 2s infinite}
+  .src.err .d{background:var(--live);animation:none}
+  @keyframes pulse2{0%{box-shadow:0 0 0 0 rgba(31,92,77,.4)}70%{box-shadow:0 0 0 6px rgba(31,92,77,0)}100%{box-shadow:0 0 0 0 rgba(31,92,77,0)}}
+  .mini{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:inherit}
+  .mini:hover{border-color:var(--blow-orange);color:var(--blow-orange)}
+  /* cards */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+  .card h2{margin:0 0 14px;font-size:12px;font-weight:700;color:var(--dijk);text-transform:uppercase;letter-spacing:1.2px;padding-bottom:9px;border-bottom:2px solid var(--dijk-soft)}
+  .grid .card,.rcol .card{margin-bottom:0}
+  /* scorebord */
   .score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
   .team{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-  .team .logo{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
-  .team .ph{width:46px;height:46px;border-radius:10px;background:#0e141c;border:1px solid var(--line);display:grid;place-items:center;font-size:20px}
-  .team .nm{font-weight:700;letter-spacing:.4px;font-size:14px}
-  .nums{display:flex;align-items:center;gap:14px;font-size:52px;font-weight:800;font-variant-numeric:tabular-nums}
+  .team .logo{width:50px;height:50px;object-fit:contain}
+  .team .ph{width:50px;height:50px;border-radius:12px;background:var(--orange-soft);display:grid;place-items:center;font-size:22px}
+  .team .nm{font-weight:700;font-size:14px;color:var(--ink)}
+  .nums{display:flex;align-items:center;gap:14px;font-size:50px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
   .nums .mvs{font-size:22px;color:var(--muted);font-weight:600}
-  .minute{text-align:center;color:var(--orange2);font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px;min-height:20px}
-  .goals{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
-  .goal{display:inline-flex;align-items:center;gap:7px;background:#0e141c;border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px}
-  .goal .mn{color:var(--orange2);font-weight:700;font-variant-numeric:tabular-nums}
-  .goal.opp{border-color:#3a2a2e}
+  .minute{text-align:center;color:var(--blow-orange);font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px;min-height:20px;font-size:13px}
+  .goals{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+  .goal{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px}
+  .goal.opp{background:var(--dijk-soft);border-color:#cfe2da}
+  .goal .mn{color:var(--blow-orange);font-weight:700;font-variant-numeric:tabular-nums}
   .goal .tag{font-size:10px;color:var(--muted)}
-  .empty{color:var(--muted);font-size:13px;text-align:center;padding:6px 0}
-  #spice .ln{padding:8px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.6}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:8px 0}
+  /* spanning */
+  #spice .ln{padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.6;color:var(--ink)}
   #spice .ln:first-child{border-top:0}
-  #spiceCard h2 .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:6px;animation:pulse 1.3s infinite;vertical-align:middle}
-  .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px}
+  #spiceCard h2 .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--live);margin-left:6px;animation:pulse 1.3s infinite;vertical-align:middle}
+  /* layout */
+  .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
   @media(max-width:840px){.grid{grid-template-columns:1fr}}
   .rcol{display:flex;flex-direction:column;gap:16px}
-  .row{display:flex;align-items:center;gap:12px;padding:11px 8px;border-top:1px solid var(--line)}
+  /* ranglijst */
+  .row{display:flex;align-items:center;gap:12px;padding:11px 6px;border-top:1px solid var(--line)}
   .row:first-child{border-top:0}
-  .row.lead{background:linear-gradient(90deg,rgba(255,122,24,.12),transparent);border-radius:10px}
+  .row.lead{background:linear-gradient(90deg,var(--orange-soft),transparent);border-radius:10px}
   .rank{width:26px;text-align:center;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
   .who{flex:1;min-width:0}
-  .who .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .who .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
   .bets{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
-  .bet{font-size:11px;padding:2px 7px;border-radius:6px;border:1px solid var(--line);background:#0e141c;color:var(--muted);white-space:nowrap}
-  .bet.good{border-color:rgba(55,200,113,.5);background:rgba(55,200,113,.14);color:#5fe093}
-  .bet.half{border-color:rgba(240,180,41,.5);background:rgba(240,180,41,.14);color:var(--amber)}
-  .bet.bad{opacity:.45;text-decoration:line-through}
-  .bet.live{border-color:rgba(78,161,255,.6);background:rgba(78,161,255,.12);color:#8cc2ff}
-  .pts{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;min-width:34px;text-align:right}
+  .bet{font-size:11px;padding:2px 7px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--muted);white-space:nowrap}
+  .bet.good{border-color:#bcdccd;background:var(--dijk-soft);color:var(--dijk)}
+  .bet.half{border-color:#e6cdb0;background:var(--orange-soft);color:var(--blow-orange)}
+  .bet.bad{opacity:.5;text-decoration:line-through}
+  .bet.live{border-color:#e6cdb0;background:var(--orange-soft);color:var(--blow-orange)}
+  .pts{font-size:23px;font-weight:800;font-variant-numeric:tabular-nums;min-width:34px;text-align:right;color:var(--ink)}
   .pts small{font-size:11px;color:var(--muted);font-weight:600;display:block;margin-top:-3px}
   /* formulier */
-  .frow{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+  .frow{display:flex;flex-direction:column;gap:5px;margin-bottom:11px}
   .frow label{font-size:12px;color:var(--muted);font-weight:600}
-  .frow input{background:#0e141c;border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:9px;font-size:14px;width:100%}
+  .frow input{background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px;font-size:14px;width:100%;font-family:inherit}
   .scorein{display:flex;align-items:center;gap:8px}
-  .scorein input{width:60px;text-align:center}
+  .scorein input{width:58px;text-align:center}
   .scorein span{font-size:12px;color:var(--muted);font-weight:700}
-  .btn{background:#1d2632;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;width:100%}
-  .btn:hover{border-color:var(--orange)}
-  .btn.primary{background:var(--orange);border-color:var(--orange);color:#1a1206}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;transition:.15s}
+  .btn:hover{border-color:var(--blow-orange)}
+  .btn.primary{background:var(--blow-orange);border-color:var(--blow-orange);color:#fff}
+  .btn.primary:hover{background:#b35e18}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
   .formmsg{font-size:13px;margin-top:8px;min-height:18px}
-  .formmsg.ok{color:var(--green)} .formmsg.err{color:var(--red)}
+  .formmsg.ok{color:var(--dijk)} .formmsg.err{color:var(--live)}
   .closedmsg{color:var(--muted);font-size:13px;line-height:1.6}
-  .legend{font-size:12.5px;color:var(--muted);line-height:1.7}
-  .legend b{color:var(--txt)}
-  footer{margin-top:24px;color:var(--muted);font-size:12px;text-align:center;line-height:1.7}
-  footer a{color:var(--orange2)}
+  .legend{font-size:12.5px;color:var(--muted);line-height:1.8}
+  .legend b{color:var(--ink)}
+  footer{margin-top:8px;color:var(--muted);font-size:12px;text-align:center;line-height:1.7;padding-bottom:34px}
+  footer b{color:var(--ink)}
   /* wachtwoord-slot */
-  #gate{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:radial-gradient(800px 500px at 50% -10%,#241405,var(--bg))}
+  #gate{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:var(--bg)}
   #gate.hidden{display:none}
-  .gatebox{width:min(360px,92vw);background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px;text-align:center}
-  .gatelogo{font-size:26px;font-weight:800}.gatelogo .o{color:var(--orange)}
-  .gatesub{color:var(--muted);font-size:13px;margin:8px 0 18px}
+  .gatebox{width:min(370px,92vw);background:#fff;border:1px solid var(--line);border-top:5px solid var(--blow-orange);border-radius:14px;box-shadow:0 12px 40px rgba(28,28,28,.12);padding:30px 26px;text-align:center}
+  .gatelogo{font-weight:800;letter-spacing:2px;font-size:26px;color:var(--ink)}.gatelogo .o{color:var(--blow-orange)}
+  .gatesub{color:var(--muted);font-size:13px;margin:6px 0 18px}
   #gateform{display:flex;gap:8px}
-  #gatepw{flex:1;background:#0e141c;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px;font-size:15px}
-  #gateform button{background:var(--orange);color:#1a1206;border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer}
-  .gateerr{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
+  #gatepw{flex:1;background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:11px;font-size:15px;font-family:inherit}
+  #gateform button{background:var(--blow-orange);color:#fff;border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;font-family:inherit}
+  .gateerr{color:var(--live);font-size:13px;min-height:18px;margin-top:10px}
 </style>
 </head>
 <body>
 <div id="gate">
   <div class="gatebox">
-    <div class="gatelogo">⚽ <span class="o">BLOW</span> Poule</div>
+    <div class="gatelogo"><span class="o">BLOW</span> Poule</div>
     <div class="gatesub">Voer het wachtwoord in om de poule te bekijken.</div>
     <form id="gateform">
       <input id="gatepw" type="password" placeholder="wachtwoord" autocomplete="current-password" autofocus>
@@ -136,14 +149,15 @@
 })();
 </script>
 
-<div class="wrap">
-  <header>
-    <div>
-      <h1>⚽ <span class="o">BLOW</span> Poule</h1>
-      <div class="sub">WK 2026 · Oranje 🟧 · live op <a href="https://npo.nl/start/live/npo1" target="_blank" rel="noopener">NPO 1</a></div>
-    </div>
-    <div class="live"><span class="clock" id="clock">--:--:--</span><span id="statusBadge" class="badge b-sched">—</span></div>
-  </header>
+<div class="brandbar">
+  <span class="logo">BLOW</span>
+  <span class="sub">Poule · WK 2026</span>
+  <span class="right"><span class="clock" id="clock">--:--:--</span></span>
+</div>
+
+<main>
+  <div class="eyebrow">Voorspel mee · Oranje op het WK</div>
+  <h1>De Poule <span class="badge b-sched" id="statusBadge">—</span></h1>
 
   <div class="selbar">
     <label for="matchSel">Wedstrijd</label>
@@ -168,7 +182,7 @@
   </div>
 
   <!-- SPANNING -->
-  <div class="card" id="spiceCard" style="margin-top:16px">
+  <div class="card" id="spiceCard">
     <h2>🔥 Spanning · wat staat er op het spel<span class="pulse"></span></h2>
     <div id="spice"></div>
   </div>
@@ -180,7 +194,6 @@
     </div>
 
     <div class="rcol">
-      <!-- DOE MEE -->
       <div class="card" id="joinCard">
         <h2>➕ Doe mee · jouw voorspelling</h2>
         <div id="joinBody">
@@ -198,7 +211,6 @@
         <div id="joinClosed" class="closedmsg" style="display:none"></div>
       </div>
 
-      <!-- UITLEG -->
       <div class="card">
         <h2>Punten</h2>
         <div class="legend" id="legend"></div>
@@ -212,7 +224,7 @@
     Live data via de gratis <b>ESPN</b>-API · inzendingen via n8n · ververst elke 15&nbsp;sec.<br>
     <span id="stamp"></span>
   </footer>
-</div>
+</main>
 
 <script src="predictions.js"></script>
 <script src="scoring.js"></script>
