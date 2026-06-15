@@ -165,7 +165,7 @@
 
   <div class="potbar">
     <span class="potamt">💰 Pot: <span id="potAmount">€60</span></span>
-    <span class="potnote">Wordt uitgekeerd zodra iemand de <b>exacte eindstand</b> goed voorspelt — anders rolt 'ie door naar de volgende wedstrijd.</span>
+    <span class="potnote">De huidige inzet. Spelregels &amp; uitkering worden door de groep bepaald.</span>
   </div>
 
   <div class="selbar">
@@ -342,6 +342,15 @@
   function renderBoard(){
     var P=preds();
     if(!P.length){ $("board").innerHTML='<div class="empty">Nog geen inzendingen. Wees de eerste via "Doe mee"!</div>'; return; }
+    if(match.status==="finished"){
+      var listed=P.slice().sort(function(a,b){return (a.name||"").localeCompare(b.name||"");});
+      $("board").innerHTML='<div class="empty" style="text-align:left;padding:2px 0 12px">Wedstrijd afgelopen — hieronder ieders voorspelling. De officiële uitslag wordt door de groep bepaald.</div>'+
+        listed.map(function(r){
+          return '<div class="row"><div class="rank">·</div><div class="who"><div class="nm">'+ESC(r.name)+'</div>'+
+            '<div class="bets"><span class="bet">⚽ '+ESC(r.scorer)+'</span><span class="bet">⏱ '+r.minute+"'</span><span class=\"bet\">📊 "+r.h+'-'+r.a+'</span></div></div></div>';
+        }).join("");
+      return;
+    }
     var rows=SCORING.standings(P, match), startedGoals=match.goals.length>0, finished=match.status==="finished";
     $("board").innerHTML=rows.map(function(r){
       var f=r.det.flags;
@@ -360,6 +369,11 @@
     }).join("");
   }
   function renderSpice(){
+    if(match.status==="finished"){
+      var sc=SCORING.liveScore(match);
+      $("spice").innerHTML='<div class="ln">🏁 Wedstrijd afgelopen · eindstand '+sc.ned+'–'+sc.jap+'. De uitslag van de poule wordt door de groep bepaald.</div>';
+      return;
+    }
     if(typeof NARRATIVE==="undefined") return;
     var n=NARRATIVE.liveNarrative(preds(), match, SCORING);
     $("spice").innerHTML=n.lines.map(function(l){ return '<div class="ln">'+l+'</div>'; }).join("");
