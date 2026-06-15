@@ -25,6 +25,10 @@
   main{max-width:1000px;margin:0 auto;padding:26px 18px 10px}
   .eyebrow{color:var(--blow-orange);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;font-size:12px}
   h1{font-size:30px;line-height:1.15;margin:6px 0 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .potbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--orange-soft);border:1px solid #e6cdb0;border-radius:12px;padding:12px 16px;margin:0 0 16px}
+  .potbar .potamt{font-weight:800;font-size:16px;color:var(--blow-orange);white-space:nowrap}
+  .potbar .potnote{font-size:12.5px;color:#7a5a3a;line-height:1.5}
+  .disc{font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px solid var(--line);line-height:1.5}
   /* status-chip */
   .badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;vertical-align:middle}
   .b-live{background:#fbe6e2;color:var(--live)}
@@ -159,6 +163,11 @@
   <div class="eyebrow">Voorspel mee · Oranje op het WK</div>
   <h1>De Poule <span class="badge b-sched" id="statusBadge">—</span></h1>
 
+  <div class="potbar">
+    <span class="potamt">💰 Pot: <span id="potAmount">€60</span></span>
+    <span class="potnote">Wordt uitgekeerd zodra iemand de <b>exacte eindstand</b> goed voorspelt — anders rolt 'ie door naar de volgende wedstrijd.</span>
+  </div>
+
   <div class="selbar">
     <label for="matchSel">Wedstrijd</label>
     <select class="sel" id="matchSel"><option>laden…</option></select>
@@ -214,6 +223,7 @@
       <div class="card">
         <h2>Punten</h2>
         <div class="legend" id="legend"></div>
+        <div class="disc">De punten hier zijn een <b>live indicatie</b> voor de spanning. De officiële winnaar &amp; uitkering worden door de groep bepaald.</div>
       </div>
     </div>
   </div>
@@ -247,6 +257,9 @@
   /* ---- klok ---- */
   function tick(){ $("clock").textContent = new Date().toLocaleTimeString("nl-NL"); }
   setInterval(tick,1000); tick();
+
+  /* ---- pot ---- */
+  (function(){ if(typeof POT!=="undefined" && $("potAmount")) $("potAmount").textContent = POT.currency + POT.amount; })();
 
   /* ---- spelerslijst ---- */
   (function(){ var dl=$("players"), seen={};

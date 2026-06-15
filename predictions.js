@@ -28,7 +28,10 @@
     OPP: ["Ueda", "Mitoma", "Kubo", "Doan", "Minamino", "Ito", "Endo", "Nakamura", "Isak", "Gyökeres", "Forsberg", "Khazri", "Msakni"]
   };
 
-  var data = { SEED: SEED, PLAYERS: PLAYERS };
+  // Pot (rolt door tot iemand de exacte eindstand voorspelt). Pas het bedrag hier aan.
+  var POT = { amount: 60, currency: "€" };
+
+  var data = { SEED: SEED, PLAYERS: PLAYERS, POT: POT };
   if (typeof module !== "undefined" && module.exports) module.exports = data;
-  else { root.SEED = SEED; root.PLAYERS = PLAYERS; }
+  else { root.SEED = SEED; root.PLAYERS = PLAYERS; root.POT = POT; }
 })(typeof window !== "undefined" ? window : globalThis);

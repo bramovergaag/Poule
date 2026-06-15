@@ -4,7 +4,7 @@ const cp = require("child_process");
 const SCORING = require("./scoring.js");
 const LIVE = require("./live.js");
 const NARRATIVE = require("./narrative.js");
-const { SEED, PLAYERS } = require("./predictions.js");
+const { SEED, PLAYERS, POT } = require("./predictions.js");
 const PREDICTIONS = SEED["760425"];
 
 let fails = 0;
@@ -57,6 +57,8 @@ ok("narratief: lege poule → 'doe mee'-oproep", nEmpty.lines.join(" ").toLowerC
 ok("SEED 760425 heeft 12 inzendingen", PREDICTIONS.length === 12);
 ok("A-Team en Anthony Das in seed", PREDICTIONS.some(p=>p.name==="A-Team") && PREDICTIONS.some(p=>p.name==="Anthony Das"));
 ok("PLAYERS.NED gevuld", (PLAYERS.NED||[]).length > 5);
+ok("POT ingesteld (€60)", POT && POT.amount === 60 && POT.currency === "€");
+ok("pot-banner + disclaimer in index.html", html.includes('id="potAmount"') && html.includes("live indicatie"));
 
 console.log("\n" + (fails ? (fails + " test(s) GEFAALD") : "Alle tests OK"));
 process.exit(fails ? 1 : 0);
